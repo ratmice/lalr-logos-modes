@@ -87,12 +87,12 @@ fn iterating_modes() {
         mode: Modes::new(s),
     };
 
-    let results: Vec<Tokens> = moded.collect();
+    let results: Vec<Tokens> = moded.map(|(_, t, _)| t).collect();
     let expect = vec![
         OuterToken(Outer::StartString),
-        InnerToken(Text),
-        InnerToken(EscapedCodepoint),
-        InnerToken(Text),
+        InnerToken(Text("Hello W")),
+        InnerToken(EscapedCodepoint("\\u{00f4}")),
+        InnerToken(Text("rld")),
         InnerToken(EscapedNewline),
         InnerToken(EndString),
     ];
