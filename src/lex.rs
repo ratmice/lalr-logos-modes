@@ -71,7 +71,6 @@ impl<'source> Iterator for ModeBridge<'source> {
     }
 }
 
-
 impl<'source> Modes<'source> {
     pub fn new(s: &'source str) -> Self {
         Self::Outer(Outer::lexer(s))
