@@ -1,0 +1,23 @@
+use crate::lex::Tokens;
+
+grammar<'source>;
+
+extern {
+  type Location = usize;
+  type Error = ();
+  enum Tokens<'source> {
+  	// I used crate::lex::Outer here merely to shut up some false positive warning about unused
+	// stuff, it'd be nice to do something less verbose.
+	StartString => Tokens::OuterToken(crate::lex::Outer::StartString),
+	Text => Tokens::InnerToken(crate::lex::Inner::Text(<&'source str>)),
+	EscapedCodepoint => Tokens::InnerToken(crate::lex::Inner::EscapedCodepoint(<&'source str>)),
+	EscapedNewline => Tokens::InnerToken(crate::lex::Inner::EscapedNewline),
+	EscapedQuote => Tokens::InnerToken(crate::lex::Inner::EscapedQuote),
+	EndString => Tokens::InnerToken(crate::lex::Inner::EndString),
+  }
+}
+
+pub mode: String = {
+  StartString <t1: Text> <cpoint: EscapedCodepoint> <t2: Text>  EscapedNewline EndString
+    => format!("{}{}{}", t1, cpoint, t2),
+}
